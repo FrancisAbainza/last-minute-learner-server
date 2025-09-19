@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
@@ -11,7 +12,13 @@
   "author": "Francis Abainza",
   "license": "ISC",
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.32",
+    "ai": "^5.0.47",
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "pdf-parse": "^1.1.1",
+    "zod": "^4.1.9"
   }
 }
