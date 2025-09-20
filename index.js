@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { generateObject } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import cors from 'cors';
+import pdf from 'pdf-parse';
 import 'dotenv/config';
 
 const app = express();
@@ -22,7 +23,7 @@ const reviewerSchema = z
     message: 'Either prompt or file must be provided',
   });
 
-app.use(cors({ origin: ["http://localhost:3000", "https://last-minute-learner.vercel.app"] }));
+app.use(cors({ origin: [/* "http://localhost:3000",  */"https://last-minute-learner.vercel.app"] }));
 
 // POST endpoint
 app.post('/api/generate-reviewer', upload.single('file'), async (req, res) => {
@@ -43,7 +44,6 @@ app.post('/api/generate-reviewer', upload.single('file'), async (req, res) => {
     // extract PDF text
     let pdfText = '';
     if (input.file) {
-      const { default: pdf } = await import('pdf-parse');
       const data = await pdf(input.file.buffer);
       pdfText = data.text;
     }
@@ -58,10 +58,8 @@ app.post('/api/generate-reviewer', upload.single('file'), async (req, res) => {
         field: z.string(),
         detailedReviewer: z.string(),
         terminologies: z
-          .array(z.object({ term: z.string(), definition: z.string() }))
-          .min(10)
-          .max(30),
-        essentialFacts: z.array(z.string()).min(5).max(20),
+          .array(z.object({ term: z.string(), definition: z.string() })),
+        essentialFacts: z.array(z.string()),
       }),
       prompt: `You are a helpful study reviewer generator. Based on the content below, produce:
 1. Title: An appropriate title for the topic
@@ -75,6 +73,16 @@ app.post('/api/generate-reviewer', upload.single('file'), async (req, res) => {
    Make it comprehensive enough to serve as a complete study guide that students would actually want to use.
 5. Terminologies: An array of objects (term & definition, at least 10, max 30)
 6. Essential Facts: An array of strings (at least 5, max 20)
+
+Produce a JSON object **exactly matching this schema**:
+{
+  "title": "string",
+  "description": "string",
+  "field": "string",
+  "detailedReviewer": "string",
+  "terminologies": [{"term": "string", "definition": "string"}],
+  "essentialFacts": ["string"]
+}
 
 Content: ${content}`,
     });
