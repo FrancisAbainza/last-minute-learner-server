@@ -8,7 +8,7 @@ import pdf from 'pdf-parse';
 import 'dotenv/config';
 
 const app = express();
-const model = gateway('anthropic/claude-sonnet-4-20240924');
+const model = gateway('anthropic/claude-sonnet-4');
 
 // configure multer to hold file in memory
 const upload = multer({ storage: multer.memoryStorage() });
