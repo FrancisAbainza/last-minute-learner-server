@@ -12,7 +12,7 @@
   "author": "Francis Abainza",
   "license": "ISC",
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.32",
+    "@ai-sdk/react": "^3.0.88",
     "ai": "^5.0.47",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",

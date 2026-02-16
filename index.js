@@ -2,13 +2,13 @@
 import express from 'express';
 import multer from 'multer';
 import { z } from 'zod';
-import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { gateway, generateObject } from 'ai';
 import cors from 'cors';
 import pdf from 'pdf-parse';
 import 'dotenv/config';
 
 const app = express();
+const model = gateway('anthropic/claude-sonnet-4-20240924');
 
 // configure multer to hold file in memory
 const upload = multer({ storage: multer.memoryStorage() });
@@ -51,7 +51,7 @@ app.post('/api/generate-reviewer', upload.single('file'), async (req, res) => {
     const content = [input.prompt, pdfText].filter(Boolean).join('\n\n');
 
     const result = await generateObject({
-      model: openai('gpt-4o-mini'),
+      model: model,
       schema: z.object({
         title: z.string(),
         description: z.string(),
