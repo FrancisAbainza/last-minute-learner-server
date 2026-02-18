@@ -4,8 +4,8 @@ This repository contains the backend server for the Last Minute Learner applicat
 
 ## Features
 
-- **AI-Powered Reviewer Generation**: Utilizes OpenAI's GPT-4o-mini model to generate comprehensive study reviewers.
-- **PDF Upload Support**: Accepts PDF files as input, extracts text, and uses it for reviewer generation.
+- **AI-Powered Reviewer Generation**: Utilizes Anthropic's Claude Sonnet 4 model through AI Gateway to generate comprehensive study reviewers.
+- **Multiple File Format Support**: Accepts PDF, DOCX, and PPTX files as input, extracts text, and uses it for reviewer generation.
 - **Prompt-Based Generation**: Allows users to provide text prompts directly for generating study material.
 - **Schema Validation**: Employs Zod for robust input validation and ensuring structured output from the AI model.
 - **CORS Enabled**: Configured for cross-origin resource sharing to allow secure communication with the frontend.
@@ -14,11 +14,12 @@ This repository contains the backend server for the Last Minute Learner applicat
 
 - **Node.js**: JavaScript runtime environment.
 - **Express.js**: Web application framework for Node.js.
-- **@ai-sdk/openai**: OpenAI SDK for AI model interactions.
+- **AI SDK**: Vercel AI SDK for unified AI model interactions with gateway support.
 - **Multer**: Middleware for handling `multipart/form-data`, primarily for file uploads.
 - **PDF-Parse**: A library to extract text from PDF files.
+- **officeparser**: Library for extracting text from DOCX and PPTX files.
 - **Zod**: TypeScript-first schema declaration and validation library.
-- **CORS**: Node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
+- **CORS**: Node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options. Configured to allow requests from `http://localhost:3000` and `https://last-minute-learner.vercel.app`.
 - **Dotenv**: Zero-dependency module that loads environment variables from a `.env` file.
 
 ## Getting Started
@@ -50,11 +51,11 @@ This repository contains the backend server for the Last Minute Learner applicat
 Create a `.env` file in the `last-minute-learner-server` directory with the following content:
 
 ```
-OPENAI_API_KEY=YOUR_OPENAI_API_KEY
+ANTHROPIC_API_KEY=YOUR_ANTHROPIC_API_KEY
 PORT=5000 # Optional, defaults to 5000
 ```
 
-Replace `YOUR_OPENAI_API_KEY` with your actual OpenAI API key.
+Replace `YOUR_ANTHROPIC_API_KEY` with your actual Anthropic API key. The server uses AI Gateway to connect to Claude Sonnet 4.
 
 ### Running the Server
 
@@ -69,7 +70,7 @@ The server will start on the port specified in your `.env` file (default: `5000`
 
 ### `POST /api/generate-reviewer`
 
-Generates a study reviewer based on a provided prompt and/or a PDF file.
+Generates a study reviewer based on a provided prompt and/or a file upload.
 
 -   **Method**: `POST`
 -   **Content-Type**: `multipart/form-data`
@@ -77,7 +78,9 @@ Generates a study reviewer based on a provided prompt and/or a PDF file.
 #### Request Body
 
 -   `prompt` (optional): A string containing the text prompt for the AI model.
--   `file` (optional): A PDF file to be processed.
+-   `file` (optional): A PDF, DOCX, or PPTX file to be processed.
+
+**Note**: At least one of `prompt` or `file` must be provided.
 
 #### Example Request (with `prompt` only)
 
@@ -93,6 +96,8 @@ curl -X POST http://localhost:5000/api/generate-reviewer \
 curl -X POST http://localhost:5000/api/generate-reviewer \
      -F "file=@/path/to/your/document.pdf"
 ```
+
+Supported file formats: PDF (.pdf), Word (.docx), PowerPoint (.pptx)
 
 #### Example Request (with both `prompt` and `file`)
 
